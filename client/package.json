@@ -6,9 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    
-    "build": "tsc -b && vite build",
-    "lint": "eslint .",
+    "build": "echo \"CF_CHECK=$VITE_CF_WORKER_URL\" && tsc -b && vite build",   
+     "lint": "eslint .",
     "preview": "vite preview"
   },
   "dependencies": {
