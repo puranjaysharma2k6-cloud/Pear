@@ -3,6 +3,8 @@ client/node_modules/
 client/dist/
 dist/
 .env
-.env.local
+client/.env
+.dev.vars
 *.log
 .DS_Store
+.wrangler/

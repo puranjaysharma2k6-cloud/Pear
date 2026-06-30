@@ -1,7 +1,7 @@
 {
-  "name": "easy-share-v2",
+  "name": "pear",
   "version": "1.0.0",
-  "description": "EasyShare - P2P File Sharing with Express + React",
+  "description": "Pear - P2P File Sharing with Express + React + Cloudflare Signaling",
   "private": true,
   "author": "Puranjay Sharma <puranjaysharma2k6@gmail.com>",
   "scripts": {
@@ -11,21 +11,22 @@
     "build": "npm run build --prefix client",
     "start": "node dist/server/index.js",
     "build:server": "tsc -p server/tsconfig.json",
-    "build:all": "npm run build:server && npm run build"
+    "build:all": "npm run build:server && npm run build",
+    "worker:dev": "wrangler dev cloudflare-worker.js",
+    "worker:deploy": "wrangler deploy cloudflare-worker.js"
   },
   "dependencies": {
     "cors": "^2.8.5",
-    "express": "^4.21.2",
-    "ws": "^8.18.3"
+    "express": "^4.21.2"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.3",
     "@types/node": "^22.0.0",
-    "@types/ws": "^8.18.1",
     "concurrently": "^9.1.2",
     "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
-    "typescript": "^5.8.3"
+    "typescript": "^5.8.3",
+    "wrangler": "^4.54.0"
   }
 }

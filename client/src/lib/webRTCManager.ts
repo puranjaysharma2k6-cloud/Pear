@@ -88,22 +88,24 @@ class WebRTCManager {
 
     this.localName = name;
 
-    // Determine signaling server URL
-    // In dev, Vite proxies /api/signaling → ws://localhost:8000/api/signaling
-    // In production, use the same host over wss
-    let signalingUrl: string;
-    const customUrl = import.meta.env.VITE_SIGNALING_URL;
+    // Signaling is always via Cloudflare Worker
+    const workerUrl = import.meta.env.VITE_CF_WORKER_URL;
 
-    if (customUrl) {
-      signalingUrl = customUrl.startsWith('ws') ? customUrl : `wss://${customUrl}`;
-    } else {
-      const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-      const host = window.location.host;
-      signalingUrl = `${protocol}//${host}/api/signaling`;
+    if (!workerUrl) {
+      console.error('[WebRTCManager] FATAL: VITE_CF_WORKER_URL is not set!');
+      toast({
+        title: 'Configuration Error',
+        description: 'Signaling server URL is not configured. Set VITE_CF_WORKER_URL.',
+        variant: 'destructive',
+      });
+      this.emitEvent({ type: 'signalingError', payload: 'Signaling server URL not configured.' });
+      return;
     }
 
-    const url = `${signalingUrl}?name=${encodeURIComponent(name)}`;
-    console.log(`[WebRTCManager] Connecting to signaling: ${url}`);
+    const signalingUrl = workerUrl.startsWith('ws') ? workerUrl : `wss://${workerUrl}`;
+    const url = `${signalingUrl}/?name=${encodeURIComponent(name)}`;
+
+    console.log('[WebRTCManager] Connecting to Cloudflare signaling:', url);
 
     this.ws = new WebSocket(url);
 

@@ -1,0 +1,13 @@
+name = "easyshare-signaling"
+main = "cloudflare-worker.js"
+compatibility_date = "2023-12-01"
+
+# Durable Objects configuration
+[[durable_objects.bindings]]
+name = "SIGNALING_SERVER"
+class_name = "SignalingServer"
+
+# Define the Durable Object class with new_sqlite_classes migration
+[[migrations]]
+tag = "v1"
+new_sqlite_classes = ["SignalingServer"]

@@ -58,9 +58,9 @@ export const WebRTCProvider = ({ children }: { children: ReactNode }) => {
   const activeTransfersRef = useRef<UIFileTransfer[]>(activeTransfers);
   const localPeerRef = useRef<UIPeer | null>(localPeer);
 
-  useEffect(() => { peersRef.current = peers; }, [peers]);
-  useEffect(() => { activeTransfersRef.current = activeTransfers; }, [activeTransfers]);
-  useEffect(() => { localPeerRef.current = localPeer; }, [localPeer]);
+  useEffect(() => { peersRef.current = peers; return undefined; }, [peers]);
+  useEffect(() => { activeTransfersRef.current = activeTransfers; return undefined; }, [activeTransfers]);
+  useEffect(() => { localPeerRef.current = localPeer; return undefined; }, [localPeer]);
 
   const updatePeer = useCallback((peerData: ManagerBasePeer, status: PeerStatus) => {
     setPeers(prev => {
@@ -271,7 +271,7 @@ export const WebRTCProvider = ({ children }: { children: ReactNode }) => {
     };
 
     webRTCManager.addListener(handleEvent);
-    return () => webRTCManager.removeListener(handleEvent);
+    return () => { webRTCManager.removeListener(handleEvent); };
   }, [toast, updatePeer, updateTransfer, findTransferByFileId]);
 
   // Stall timeout watchdog

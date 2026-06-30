@@ -1,84 +1,106 @@
 # Pear 🍐
 
-Direct peer-to-peer file sharing using WebRTC. No file size limits, no cloud uploads — just browser-to-browser transfers.
+Direct peer-to-peer file sharing using WebRTC. No file size limits, no cloud uploads — files go browser-to-browser.
 
-Built with **Express** (signaling server) + **React + Vite** (client).
+**Stack:** Express (static file server) + React + Vite (client) + Cloudflare Workers + Durable Objects (signaling)
+
+## Architecture
+
+```
+Browser A ──WebSocket──► Cloudflare Worker (Durable Object)
+                         Relays SDP + ICE ◄──WebSocket── Browser B
+                                │
+             Once P2P negotiated, Worker is no longer involved
+                                │
+Browser A ◄═══════ RTCDataChannel (direct P2P) ══════════► Browser B
+```
+
+The **Express server** only serves the React static bundle. It has no WebSocket logic.
+All signaling (peer discovery, SDP offer/answer, ICE candidates) goes through the **Cloudflare Worker**.
 
 ## Project Structure
 
 ```
-easy-share-v2/
-├── server/          Express WebSocket signaling server
-│   └── index.ts
-├── client/          React + Vite frontend
-│   ├── src/
-│   │   ├── pages/       Route pages
-│   │   ├── components/  UI components
-│   │   ├── contexts/    WebRTCContext
-│   │   ├── lib/         WebRTC manager + utils
-│   │   └── hooks/       use-toast
-│   └── ...
-└── package.json     Root: runs both server & client
+pear/
+├── cloudflare-worker.js   Signaling server (Cloudflare Worker + Durable Objects)
+├── wrangler.toml          Wrangler config for worker deployment
+├── .dev.vars              Cloudflare dev secrets (gitignored)
+├── server/
+│   └── index.ts           Express server — serves static React build
+├── client/
+│   ├── .env               VITE_CF_WORKER_URL (gitignored, copy from .env.example)
+│   └── src/
+│       ├── pages/
+│       ├── components/
+│       ├── contexts/      WebRTCContext
+│       └── lib/           webRTCManager (connects to CF Worker)
+└── package.json
+```
+
+## Setup
+
+### 1. Install dependencies
+
+```bash
+npm install
+npm install --prefix client
+```
+
+### 2. Configure the client env
+
+```bash
+cp client/.env.example client/.env
+# Edit client/.env and set your Cloudflare Worker URL:
+# VITE_CF_WORKER_URL="wss://your-worker.your-subdomain.workers.dev"
+```
+
+### 3. Deploy the Cloudflare Worker (first time)
+
+```bash
+npm run worker:deploy
+# or for local testing:
+npm run worker:dev
 ```
 
 ## Development
 
 ```bash
-# Install root dependencies (server)
-npm install
-
-# Install client dependencies
-npm install --prefix client
-
-# Run both server + client in dev mode
 npm run dev
 ```
 
-- Client runs on **http://localhost:3000**
-- Server runs on **http://localhost:8000**
-- Vite proxies `/api/signaling` WebSocket to the Express server
+- React client: **http://localhost:3000** (Vite dev server)
+- Express server: **http://localhost:8000** (static serving, dev mode only shows info)
+- Signaling: **Cloudflare Worker** (set `VITE_CF_WORKER_URL` in `client/.env`)
 
-## Production Build
+## Production Build & Deploy
 
 ```bash
-# Build client
+# Build the React client
 npm run build
 
-# Build server
+# Build the Express server
 npm run build:server
 
-# Start production server (serves built client + WebSocket)
-NODE_ENV=production npm start
+# Run in production (Express serves the React bundle)
+NODE_ENV=production PORT=8000 npm start
 ```
 
-## Deployment
+The Express server will serve the built `client/dist` at `/` and handle SPA routing fallback.
 
-This app runs as a single Node.js process in production:
-1. The Express server serves the built React app as static files
-2. The same server handles WebSocket signaling at `/api/signaling`
+## Environment Variables
 
-### Render / Railway / Fly.io
-Set `NODE_ENV=production`, run `npm run build:all` then `npm start`.
+### Client (`client/.env`)
 
-### Environment Variables
+| Variable | Required | Description |
+|---|---|---|
+| `VITE_CF_WORKER_URL` | ✅ Yes | Cloudflare Worker WebSocket URL (`wss://...`) |
+
+### Server (`.env` or process env)
 
 | Variable | Default | Description |
 |---|---|---|
-| `PORT` | `8000` | Server port |
+| `PORT` | `8000` | Express server port |
 | `NODE_ENV` | `development` | Environment |
-
-Client-side (in `client/.env`):
-
-| Variable | Default | Description |
-|---|---|---|
-| `VITE_SIGNALING_URL` | auto-detected | Override signaling WS URL |
-
-## How It Works
-
-1. Peers connect to the Express WebSocket server for signaling
-2. The server relays WebRTC offer/answer/ICE messages between peers
-3. Once a P2P connection is established, file transfer happens **directly** between browsers
-4. The server is **never involved** in actual file data transfer
 
 ---
 
