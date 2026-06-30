@@ -1,13 +1,14 @@
 name = "pear"
 main = "cloudflare-worker.js"
-compatibility_date = "2023-12-01"
+compatibility_date = "2025-01-01"
 
 # Durable Objects configuration
 [[durable_objects.bindings]]
 name = "SIGNALING_SERVER"
 class_name = "SignalingServer"
 
-# Define the Durable Object class with new_sqlite_classes migration
+# Use new_classes (not new_sqlite_classes) — works on free plan
+# App uses in-memory Maps, no SQLite storage needed
 [[migrations]]
 tag = "v1"
-new_sqlite_classes = ["SignalingServer"]
+new_classes = ["SignalingServer"]

@@ -89,19 +89,8 @@ class WebRTCManager {
     this.localName = name;
 
     // Signaling is always via Cloudflare Worker
-    const workerUrl = import.meta.env.VITE_CF_WORKER_URL;
-
-    if (!workerUrl) {
-      console.error('[WebRTCManager] FATAL: VITE_CF_WORKER_URL is not set!');
-      toast({
-        title: 'Configuration Error',
-        description: 'Signaling server URL is not configured. Set VITE_CF_WORKER_URL.',
-        variant: 'destructive',
-      });
-      this.emitEvent({ type: 'signalingError', payload: 'Signaling server URL not configured.' });
-      return;
-    }
-
+    // Fall back to the known production worker URL if env var is missing
+    const workerUrl = import.meta.env.VITE_CF_WORKER_URL || 'wss://pear.puranjaysharma2k6.workers.dev';
     const signalingUrl = workerUrl.startsWith('ws') ? workerUrl : `wss://${workerUrl}`;
     const url = `${signalingUrl}/?name=${encodeURIComponent(name)}`;
 

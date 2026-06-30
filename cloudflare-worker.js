@@ -8,8 +8,11 @@ export default {
     }
 
     // Handle regular HTTP requests
-    return new Response("EasyShare Signaling Server - WebSocket Only", {
-      headers: { "Content-Type": "text/plain" },
+    return new Response("Pear Signaling Server - WebSocket Only", {
+      headers: {
+        "Content-Type": "text/plain",
+        "Access-Control-Allow-Origin": "*",
+      },
     });
   },
 };

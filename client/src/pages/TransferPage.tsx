@@ -43,14 +43,14 @@ const getStatusColor = (status: UIFileTransfer["status"]) => {
 
 export default function TransferPage() {
   const { id } = useParams<{ id: string }>()
-  const { getTransferById } = useWebRTC()
+  const { getTransferById, activeTransfers } = useWebRTC()
   const [transfer, setTransfer] = useState<UIFileTransfer | undefined>()
   const navigate = useNavigate()
   const { toast } = useToast()
 
   useEffect(() => {
     if (id) setTransfer(getTransferById(id))
-  }, [id, getTransferById])
+  }, [id, getTransferById, activeTransfers])
 
   if (!transfer) {
     return (
