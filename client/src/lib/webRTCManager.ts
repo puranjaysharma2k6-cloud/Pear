@@ -88,12 +88,19 @@ class WebRTCManager {
 
     this.localName = name;
 
-    // Signaling is always via Cloudflare Worker
-    // Fall back to the known production worker URL if env var is missing
-    const workerUrl = import.meta.env.VITE_CF_WORKER_URL || 'wss://pear.puranjaysharma2k6.workers.dev';
+    // Signaling is always via Cloudflare Worker.
+    // VITE_CF_WORKER_URL must be set in Cloudflare Pages environment variables.
+    const workerUrl = import.meta.env.VITE_CF_WORKER_URL;
+
+    if (!workerUrl) {
+      const msg = 'VITE_CF_WORKER_URL is not set. Add it in Cloudflare Pages → Settings → Environment variables.';
+      console.error('[WebRTCManager]', msg);
+      this.emitEvent({ type: 'signalingError', payload: msg });
+      return;
+    }
+
     const signalingUrl = workerUrl.startsWith('ws') ? workerUrl : `wss://${workerUrl}`;
     const url = `${signalingUrl}/?name=${encodeURIComponent(name)}`;
-
     console.log('[WebRTCManager] Connecting to Cloudflare signaling:', url);
 
     this.ws = new WebSocket(url);
