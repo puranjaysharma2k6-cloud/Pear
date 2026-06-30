@@ -1,0 +1,205 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 214 83% 12%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 214 83% 12%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 214 83% 12%;
+
+    --primary: 214 83% 51%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 214 83% 96%;
+    --secondary-foreground: 214 83% 12%;
+
+    --muted: 214 83% 96%;
+    --muted-foreground: 214 16% 47%;
+
+    --accent: 214 83% 96%;
+    --accent-foreground: 214 83% 12%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 83% 91%;
+    --input: 214 83% 91%;
+    --ring: 214 83% 51%;
+
+    --radius: 0.75rem;
+  }
+
+  .dark {
+    --background: 214 83% 10%;
+    --foreground: 0 0% 100%;
+
+    --card: 214 83% 10%;
+    --card-foreground: 0 0% 100%;
+
+    --popover: 214 83% 10%;
+    --popover-foreground: 0 0% 100%;
+
+    --primary: 214 83% 55%;
+    --primary-foreground: 214 83% 10%;
+
+    --secondary: 214 83% 16%;
+    --secondary-foreground: 0 0% 100%;
+
+    --muted: 214 83% 16%;
+    --muted-foreground: 214 20% 65%;
+
+    --accent: 214 83% 16%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 62% 30%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 83% 16%;
+    --input: 214 83% 16%;
+    --ring: 214 83% 55%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground transition-colors duration-300;
+  }
+
+  ::selection {
+    @apply bg-primary/20 text-primary;
+  }
+}
+
+/* Enhanced File Drop Area */
+.file-drop-area {
+  @apply transition-all duration-300 relative overflow-hidden;
+}
+
+.file-drop-area.drag-active {
+  @apply bg-primary/10 border-primary scale-[1.02] shadow-lg;
+}
+
+.file-drop-area.drag-active::after {
+  content: '';
+  @apply absolute inset-0 bg-gradient-to-r from-transparent via-primary/5 to-transparent;
+  animation: shimmer 2s infinite linear;
+}
+
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-secondary/50 rounded-full;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-muted-foreground/30 rounded-full transition-colors hover:bg-muted-foreground/50;
+}
+
+/* Enhanced Animations */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.animate-pulse-slow {
+  animation: pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes progress {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animated-gradient {
+  background: linear-gradient(90deg,
+    hsl(var(--primary)) 0%,
+    hsl(var(--secondary)) 50%,
+    hsl(var(--primary)) 100%
+  );
+  background-size: 200% 100%;
+  animation: progress 2s linear infinite;
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Page Transitions */
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 300ms, transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+.page-transition-exit { opacity: 1; transform: translateY(0); }
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 300ms, transform 300ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Enhanced Progress Bar */
+.progress-bar-container {
+  @apply relative h-2 w-full overflow-hidden rounded-full bg-secondary;
+}
+
+.progress-bar-fill {
+  @apply h-full bg-primary transition-all duration-300 ease-out;
+  background-image: linear-gradient(
+    90deg,
+    transparent 25%,
+    rgba(255, 255, 255, 0.2) 50%,
+    transparent 75%
+  );
+  background-size: 200% 100%;
+  animation: progress 2s linear infinite;
+}
+
+/* Enhanced Focus Styles */
+.focus-ring {
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-background;
+}
+
+/* Loading skeleton */
+.loading-skeleton {
+  @apply animate-pulse bg-muted rounded-md;
+}
+
+/* Hover card */
+.hover-card {
+  @apply transition-all duration-300 hover:shadow-lg hover:scale-[1.02] hover:border-primary/50;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  ::before,
+  ::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

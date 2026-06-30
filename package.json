@@ -1,0 +1,31 @@
+{
+  "name": "easy-share-v2",
+  "version": "1.0.0",
+  "description": "EasyShare - P2P File Sharing with Express + React",
+  "private": true,
+  "author": "Puranjay Sharma <puranjaysharma2k6@gmail.com>",
+  "scripts": {
+    "dev": "concurrently \"npm run server:dev\" \"npm run client:dev\"",
+    "server:dev": "nodemon --watch server --ext ts,js --exec ts-node server/index.ts",
+    "client:dev": "npm run dev --prefix client",
+    "build": "npm run build --prefix client",
+    "start": "node dist/server/index.js",
+    "build:server": "tsc -p server/tsconfig.json",
+    "build:all": "npm run build:server && npm run build"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.3",
+    "@types/node": "^22.0.0",
+    "@types/ws": "^8.18.1",
+    "concurrently": "^9.1.2",
+    "nodemon": "^3.1.10",
+    "ts-node": "^10.9.2",
+    "typescript": "^5.8.3"
+  }
+}
