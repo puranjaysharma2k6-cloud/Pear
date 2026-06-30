@@ -1,6 +1,7 @@
 # Pear 🍐
 
-**try it out!** [PEAR](https://pear-384.pages.dev/settings).
+**try it out!** [PEAR](https://pear-384.pages.dev/settings). 
+- **Note** you might not be able to use it if you are connected to a coorprate / university network (try on personal networks) 
 
 ---
 **Pear** is a modern, serverless peer-to-peer (P2P) file sharing app that lets users transfer files directly between browsers , no uploads to a central server, no accounts, no limits.
